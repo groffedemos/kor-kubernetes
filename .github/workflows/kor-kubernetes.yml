@@ -1,0 +1,49 @@
+# This is a basic workflow to help you get started with Actions
+
+name: kor-kubernetes
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+  
+env:
+  URL_KOR_RELEASE: 'https://github.com/yonahd/kor/releases/download/v0.6.6/kor_Linux_x86_64.tar.gz'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kubernetes Set Context
+        uses: Azure/k8s-set-context@v3.0
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Exibindo namespaces existentes
+        run: kubectl get namespaces
+      
+      - name: Instalar o Kor
+        run: |
+          mkdir tmp-kor
+          cd tmp-kor
+          echo ''
+          echo "Url utilizada para download do Kor: ${{ env.URL_KOR_RELEASE }}"
+          echo ''
+          curl -L -o kor.tar.gz ${{ env.URL_KOR_RELEASE }}
+          tar -xvzf kor.tar.gz
+          ls
+          chmod +x kor
+          sudo mv kor /usr/local/bin/
+          cd ..
+          rm -rf tmp-kor
+
+      - name: Testar o Kor
+        run: |
+          kor --help
+
+      - name: Analisar recursos que nao estao em uso no cluster Kubernetes com a ferramenta Kor
+        run: |
+          kor all
