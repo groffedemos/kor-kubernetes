@@ -46,4 +46,4 @@ jobs:
 
       - name: Analisar recursos que nao estao em uso no cluster Kubernetes com a ferramenta Kor
         run: |
-          kor all
+          kor all --include-namespaces reloader-testes01,apicontagem-loadtests-8,apicontagem-loadtests-9
