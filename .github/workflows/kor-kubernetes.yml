@@ -17,13 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Kubernetes Set Context
-        uses: Azure/k8s-set-context@v3.0
-        with:
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-      - name: Exibindo namespaces existentes
-        run: kubectl get namespaces
       
       - name: Instalar o Kor
         run: |
@@ -43,7 +37,14 @@ jobs:
       - name: Testar o Kor
         run: |
           kor --help
+          
+      - name: Kubernetes Set Context
+        uses: Azure/k8s-set-context@v3.0
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
+      - name: Exibindo namespaces existentes
+        run: kubectl get namespaces
       - name: Analisar recursos que nao estao em uso no cluster Kubernetes com a ferramenta Kor
         run: |
           kor all --include-namespaces reloader-testes01,apicontagem-loadtests-8,apicontagem-loadtests-9
